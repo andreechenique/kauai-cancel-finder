@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -6,18 +6,88 @@ import SearchForm from "@/components/SearchForm";
 import PropertyCard from "@/components/PropertyCard";
 import MonitoringDashboard from "@/components/MonitoringDashboard";
 import { Search, Bell, Zap, Shield } from "lucide-react";
-import heroImage from "@/assets/kauai-hero.jpg";
+import Cookies from "js-cookie";
+import kauaiHero from "@/assets/kauai-hero.jpg";
+import santoriniHero from "@/assets/santorini-hero.jpg";
+import baliHero from "@/assets/bali-hero.jpg";
+import maldivesHero from "@/assets/maldives-hero.jpg";
+import patagoniaHero from "@/assets/patagonia-hero.jpg";
+import japanHero from "@/assets/japan-hero.jpg";
 import property1 from "@/assets/property-1.jpg";
 import property2 from "@/assets/property-2.jpg";
 import property3 from "@/assets/property-3.jpg";
 
+const destinations = [
+  {
+    name: "Kauai",
+    location: "Hawaii, USA",
+    image: kauaiHero,
+    accent: "emerald"
+  },
+  {
+    name: "Santorini", 
+    location: "Greece",
+    image: santoriniHero,
+    accent: "blue"
+  },
+  {
+    name: "Bali",
+    location: "Indonesia", 
+    image: baliHero,
+    accent: "green"
+  },
+  {
+    name: "Maldives",
+    location: "Indian Ocean",
+    image: maldivesHero,
+    accent: "cyan"
+  },
+  {
+    name: "Patagonia",
+    location: "Chile & Argentina",
+    image: patagoniaHero,
+    accent: "slate"
+  },
+  {
+    name: "Japan",
+    location: "Cherry Blossom Season",
+    image: japanHero,
+    accent: "pink"
+  }
+];
+
 const Index = () => {
   const [activeTab, setActiveTab] = useState("search");
+  const [currentDestination, setCurrentDestination] = useState(0);
+  const [favoriteDestinations, setFavoriteDestinations] = useState<string[]>([]);
+
+  // Load favorite destinations from cookies
+  useEffect(() => {
+    const saved = Cookies.get('favoriteDestinations');
+    if (saved) {
+      setFavoriteDestinations(JSON.parse(saved));
+    }
+  }, []);
+
+  // Save favorite destinations to cookies
+  const addToFavorites = (destination: string) => {
+    const updated = [...favoriteDestinations, destination];
+    setFavoriteDestinations(updated);
+    Cookies.set('favoriteDestinations', JSON.stringify(updated), { expires: 365 });
+  };
+
+  // Rotate through destinations every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentDestination((prev) => (prev + 1) % destinations.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const mockProperties = [
     {
       title: "Oceanfront Villa with Private Beach Access",
-      location: "Hanalei Bay, Kauai",
+      location: "Santorini, Greece",
       price: "$450/night",
       rating: 4.9,
       guests: 6,
@@ -27,8 +97,8 @@ const Index = () => {
       isNew: true
     },
     {
-      title: "Luxury Resort Suite with Mountain Views",
-      location: "Princeville, Kauai",
+      title: "Luxury Mountain Lodge with Infinity Pool",
+      location: "Ubud, Bali",
       price: "$320/night", 
       rating: 4.7,
       guests: 4,
@@ -37,11 +107,11 @@ const Index = () => {
       availability: "Available Mar 18-25"
     },
     {
-      title: "Charming Beach Cottage with Lanai",
-      location: "Hanalei, Kauai",
-      price: "$280/night",
+      title: "Overwater Bungalow Paradise",
+      location: "Maldives",
+      price: "$680/night",
       rating: 4.8,
-      guests: 4,
+      guests: 2,
       platform: "VRBO" as const,
       image: property3,
       availability: "Available Mar 20-27"
@@ -52,29 +122,57 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <div 
-        className="relative h-screen bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroImage})` }}
+        className="relative h-screen bg-cover bg-center bg-no-repeat transition-all duration-1000"
+        style={{ backgroundImage: `url(${destinations[currentDestination].image})` }}
       >
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 flex items-center justify-center h-full px-4">
           <div className="text-center text-white max-w-4xl">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6">
-              Never Miss a <span className="text-sunset">Kauai</span> Cancellation
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
+              Never Miss a <span className="text-sunset">{destinations[currentDestination].name}</span> Cancellation
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-white/90">
+            <p className="text-lg md:text-xl mb-2 text-white/80 animate-fade-in">
+              {destinations[currentDestination].location}
+            </p>
+            <p className="text-xl md:text-2xl mb-8 text-white/90 animate-fade-in">
               Get instant notifications when vacation rentals become available in your dream location
             </p>
-            <Button 
-              size="lg" 
-              className="bg-gradient-ocean hover:opacity-90 text-primary-foreground px-8 py-4 text-lg"
-              onClick={() => {
-                const searchSection = document.getElementById('search-section');
-                searchSection?.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              <Search className="mr-2 h-5 w-5" />
-              Start Monitoring Now
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button 
+                size="lg" 
+                className="bg-gradient-ocean hover:opacity-90 text-primary-foreground px-8 py-4 text-lg"
+                onClick={() => {
+                  const searchSection = document.getElementById('search-section');
+                  searchSection?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                <Search className="mr-2 h-5 w-5" />
+                Start Monitoring Now
+              </Button>
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="bg-white/10 text-white border-white/20 hover:bg-white/20 px-6 py-4"
+                onClick={() => addToFavorites(destinations[currentDestination].name)}
+              >
+                ♡ Save {destinations[currentDestination].name}
+              </Button>
+            </div>
+            
+            {/* Destination Indicators */}
+            <div className="flex justify-center mt-8 gap-2">
+              {destinations.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentDestination 
+                      ? 'bg-white scale-125' 
+                      : 'bg-white/40 hover:bg-white/60'
+                  }`}
+                  onClick={() => setCurrentDestination(index)}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -103,9 +201,9 @@ const Index = () => {
                 <Zap className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold mb-4">Real-Time Monitoring</h3>
-              <p className="text-muted-foreground">
-                We check Airbnb, VRBO, and major hotels every 15 minutes for new availability
-              </p>
+               <p className="text-muted-foreground">
+                 We monitor Airbnb, VRBO, and major hotels every 15 minutes across 200+ destinations worldwide
+               </p>
             </Card>
 
             <Card className="p-8 text-center hover:shadow-lg transition-shadow">
