@@ -15,22 +15,22 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
     hotels: "bg-gradient-sunset"
   };
 
+  const platformNames = {
+    airbnb: "Airbnb",
+    vrbo: "VRBO",
+    hotels: "Hotel"
+  };
+
   const formatPrice = (price: number, currency: string) => {
-    return `${currency}${price}/night`;
+    return `${currency === 'USD' ? '$' : currency}${price}`;
   };
 
-  const formatAvailability = (lastSeen: string) => {
-    const date = new Date(lastSeen);
-    return `Available from ${date.toLocaleDateString()}`;
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString();
   };
 
-  const getPlatformName = (platform: string) => {
-    switch (platform.toLowerCase()) {
-      case 'airbnb': return 'Airbnb';
-      case 'vrbo': return 'VRBO';
-      case 'hotels': return 'Hotel';
-      default: return platform;
-    }
+  const getImageUrl = (images: string[]) => {
+    return images.length > 0 ? images[0] : '/placeholder-property.jpg';
   };
 
   return (
@@ -43,15 +43,18 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
       
       <div className="relative">
         <img 
-          src={property.images[0] || "/placeholder.svg"} 
+          src={getImageUrl(property.images)} 
           alt={property.title}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = '/placeholder-property.jpg';
+          }}
         />
-        <Badge className={`absolute top-3 left-3 ${platformColors[property.platform.toLowerCase() as keyof typeof platformColors] || 'bg-gradient-ocean'} text-white border-0`}>
-          {getPlatformName(property.platform)}
+        <Badge className={`absolute top-3 left-3 ${platformColors[property.platform as keyof typeof platformColors]} text-white border-0`}>
+          {platformNames[property.platform as keyof typeof platformNames]}
         </Badge>
         <div className="absolute top-3 right-3 bg-black/70 text-white px-2 py-1 rounded text-sm font-bold">
-          {formatPrice(property.price, property.currency)}
+          {formatPrice(property.price, property.currency)}/night
         </div>
       </div>
 
@@ -80,17 +83,38 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
             </div>
           </div>
 
+          <div className="text-sm text-muted-foreground">
+            <p className="line-clamp-2">{property.description}</p>
+          </div>
+
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-tropical" />
-            <span className="text-tropical font-medium">{formatAvailability(property.lastSeen)}</span>
+            <span className="text-tropical font-medium">
+              Available • Last seen {formatDate(property.lastSeen)}
+            </span>
           </div>
+
+          {property.amenities.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {property.amenities.slice(0, 3).map((amenity, index) => (
+                <Badge key={index} variant="outline" className="text-xs">
+                  {amenity.replace('_', ' ')}
+                </Badge>
+              ))}
+              {property.amenities.length > 3 && (
+                <Badge variant="outline" className="text-xs">
+                  +{property.amenities.length - 3} more
+                </Badge>
+              )}
+            </div>
+          )}
 
           <Button 
             className="w-full bg-ocean hover:bg-ocean/90 text-white"
             onClick={() => window.open(property.bookingUrl, '_blank')}
           >
             <ExternalLink className="h-4 w-4 mr-2" />
-            View on {getPlatformName(property.platform)}
+            View on {platformNames[property.platform as keyof typeof platformNames]}
           </Button>
         </div>
       </CardContent>
