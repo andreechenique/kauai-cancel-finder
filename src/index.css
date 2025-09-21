@@ -8,26 +8,39 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 210 44% 97%;
+    --foreground: 213 31% 14%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 213 31% 14%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 213 31% 14%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 200 84% 45%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 162 47% 85%;
+    --secondary-foreground: 213 31% 14%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 26 85% 65%;
+    --accent-foreground: 213 31% 14%;
+
+    /* Custom tropical colors */
+    --ocean-blue: 200 84% 45%;
+    --ocean-light: 200 84% 85%;
+    --tropical-green: 162 47% 55%;
+    --tropical-light: 162 47% 85%;
+    --sunset-orange: 26 85% 65%;
+    --sunset-light: 26 85% 90%;
+
+    /* Gradients */
+    --gradient-ocean: linear-gradient(135deg, hsl(200 84% 45%), hsl(200 84% 65%));
+    --gradient-tropical: linear-gradient(135deg, hsl(162 47% 55%), hsl(200 84% 45%));
+    --gradient-sunset: linear-gradient(135deg, hsl(26 85% 65%), hsl(26 85% 45%));
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;

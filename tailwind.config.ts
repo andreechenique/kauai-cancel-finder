@@ -57,6 +57,24 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        /* Custom tropical colors */
+        ocean: {
+          DEFAULT: "hsl(var(--ocean-blue))",
+          light: "hsl(var(--ocean-light))",
+        },
+        tropical: {
+          DEFAULT: "hsl(var(--tropical-green))",
+          light: "hsl(var(--tropical-light))",
+        },
+        sunset: {
+          DEFAULT: "hsl(var(--sunset-orange))",
+          light: "hsl(var(--sunset-light))",
+        },
+      },
+      backgroundImage: {
+        "gradient-ocean": "var(--gradient-ocean)",
+        "gradient-tropical": "var(--gradient-tropical)",
+        "gradient-sunset": "var(--gradient-sunset)",
       },
       borderRadius: {
         lg: "var(--radius)",
