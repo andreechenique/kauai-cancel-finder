@@ -5,17 +5,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SearchForm from "@/components/SearchForm";
 import PropertyCard from "@/components/PropertyCard";
 import MonitoringDashboard from "@/components/MonitoringDashboard";
-import { Search, Bell, Zap, Shield } from "lucide-react";
+import { Search, Bell, Zap, Shield, Loader2 } from "lucide-react";
 import Cookies from "js-cookie";
+import { apiService, Property } from "@/services/api";
 import kauaiHero from "@/assets/kauai-hero.jpg";
 import santoriniHero from "@/assets/santorini-hero.jpg";
 import baliHero from "@/assets/bali-hero.jpg";
 import maldivesHero from "@/assets/maldives-hero.jpg";
 import patagoniaHero from "@/assets/patagonia-hero.jpg";
 import japanHero from "@/assets/japan-hero.jpg";
-import property1 from "@/assets/property-1.jpg";
-import property2 from "@/assets/property-2.jpg";
-import property3 from "@/assets/property-3.jpg";
 
 const destinations = [
   {
@@ -60,6 +58,8 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("search");
   const [currentDestination, setCurrentDestination] = useState(0);
   const [favoriteDestinations, setFavoriteDestinations] = useState<string[]>([]);
+  const [recentProperties, setRecentProperties] = useState<Property[]>([]);
+  const [loadingProperties, setLoadingProperties] = useState(true);
 
   // Load favorite destinations from cookies
   useEffect(() => {
@@ -67,6 +67,22 @@ const Index = () => {
     if (saved) {
       setFavoriteDestinations(JSON.parse(saved));
     }
+  }, []);
+
+  // Load recent properties from API
+  useEffect(() => {
+    const loadRecentProperties = async () => {
+      try {
+        const properties = await apiService.getRecentProperties();
+        setRecentProperties(properties);
+      } catch (error) {
+        console.error('Failed to load recent properties:', error);
+      } finally {
+        setLoadingProperties(false);
+      }
+    };
+
+    loadRecentProperties();
   }, []);
 
   // Save favorite destinations to cookies
@@ -83,40 +99,6 @@ const Index = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
-
-  const mockProperties = [
-    {
-      title: "Oceanfront Villa with Private Beach Access",
-      location: "Santorini, Greece",
-      price: "$450/night",
-      rating: 4.9,
-      guests: 6,
-      platform: "Airbnb" as const,
-      image: property1,
-      availability: "Available Mar 15-22",
-      isNew: true
-    },
-    {
-      title: "Luxury Mountain Lodge with Infinity Pool",
-      location: "Ubud, Bali",
-      price: "$320/night", 
-      rating: 4.7,
-      guests: 4,
-      platform: "Hotel" as const,
-      image: property2,
-      availability: "Available Mar 18-25"
-    },
-    {
-      title: "Overwater Bungalow Paradise",
-      location: "Maldives",
-      price: "$680/night",
-      rating: 4.8,
-      guests: 2,
-      platform: "VRBO" as const,
-      image: property3,
-      availability: "Available Mar 20-27"
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -241,9 +223,19 @@ const Index = () => {
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {mockProperties.map((property, index) => (
-                    <PropertyCard key={index} {...property} />
-                  ))}
+                  {loadingProperties ? (
+                    <div className="col-span-full flex items-center justify-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                    </div>
+                  ) : recentProperties.length > 0 ? (
+                    recentProperties.map((property) => (
+                      <PropertyCard key={property.id} property={property} />
+                    ))
+                  ) : (
+                    <div className="col-span-full text-center py-12 text-muted-foreground">
+                      <p>No recent properties found. Start monitoring to discover new availability!</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </TabsContent>
@@ -260,16 +252,16 @@ const Index = () => {
         <div className="max-w-4xl mx-auto text-center">
           <Card className="p-8 bg-gradient-to-r from-ocean/5 to-tropical/5 border-ocean/20">
             <Shield className="h-12 w-12 mx-auto mb-4 text-ocean" />
-            <h3 className="text-2xl font-bold mb-4">Ready to Build the Backend?</h3>
+            <h3 className="text-2xl font-bold mb-4">Powered by Advanced AI</h3>
             <p className="text-lg text-muted-foreground mb-6">
-              This beautiful interface is ready! To enable real-time monitoring, notifications, and data storage, 
-              connect your Lovable project to Supabase for powerful backend functionality.
+              Our system uses natural language processing and real-time monitoring to find your perfect vacation rental.
+              Advanced search capabilities and instant notifications ensure you never miss an opportunity.
             </p>
             <div className="space-y-2 text-sm text-muted-foreground">
-              <p>✓ Store user search preferences</p>
-              <p>✓ Schedule automated property checks</p>
-              <p>✓ Send email/SMS notifications</p>
-              <p>✓ Track property availability history</p>
+              <p>✓ Natural language search processing</p>
+              <p>✓ Real-time property monitoring</p>
+              <p>✓ Instant availability notifications</p>
+              <p>✓ Multi-platform integration</p>
             </div>
           </Card>
         </div>
