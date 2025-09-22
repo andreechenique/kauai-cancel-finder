@@ -1,50 +1,27 @@
+import { 
+  User, 
+  AuthResponse, 
+  LoginRequest, 
+  RegisterRequest, 
+  Property, 
+  Monitor, 
+  Stats 
+} from '@/types/api';
+
 const API_BASE_URL = 'https://zmhqivc51edl.manus.space/api/v1';
 
-export interface Property {
-  id: number;
-  title: string;
-  location: string;
-  price: number;
-  currency: string;
-  rating: number;
-  reviewCount: number;
-  guests: number;
-  platform: string;
-  images: string[];
-  description: string;
-  amenities: string[];
-  bookingUrl: string;
-  lastSeen: string;
-  justFound?: boolean;
-}
-
-export interface Monitor {
-  id: number;
-  location: string;
-  checkIn: string;
-  checkOut: string;
-  guests: number;
-  status: string;
-  created: string;
-}
-
-export interface Stats {
-  totalProperties: number;
-  activeMonitors: number;
-  alertsToday: number;
-  platforms: {
-    airbnb: number;
-    vrbo: number;
-    hotels: number;
-  };
-}
-
 class ApiService {
+  private getAuthHeaders(): Record<string, string> {
+    const token = localStorage.getItem('auth_token');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  }
+
   private async request(endpoint: string, options: RequestInit = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
+        ...this.getAuthHeaders(),
         ...options.headers,
       },
       ...options,
@@ -55,6 +32,45 @@ class ApiService {
     }
 
     return response.json();
+  }
+
+  // Authentication methods
+  async login(data: LoginRequest): Promise<AuthResponse> {
+    const response = await this.request('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    
+    if (response.token) {
+      localStorage.setItem('auth_token', response.token);
+    }
+    
+    return response;
+  }
+
+  async register(data: RegisterRequest): Promise<AuthResponse> {
+    const response = await this.request('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    
+    if (response.token) {
+      localStorage.setItem('auth_token', response.token);
+    }
+    
+    return response;
+  }
+
+  async logout(): Promise<void> {
+    await this.request('/auth/logout', {
+      method: 'POST',
+    });
+    
+    localStorage.removeItem('auth_token');
+  }
+
+  async getCurrentUser(): Promise<User> {
+    return this.request('/auth/me');
   }
 
   async getStats(): Promise<Stats> {
@@ -83,4 +99,8 @@ class ApiService {
   }
 }
 
-export const apiService = new ApiService();
+export const apiClient = new ApiService();
+export const apiService = apiClient; // Keep backward compatibility
+
+// Re-export types for convenience
+export type { User, AuthResponse, LoginRequest, RegisterRequest, Property, Monitor, Stats } from '@/types/api';
