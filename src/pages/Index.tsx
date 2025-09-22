@@ -5,9 +5,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SearchForm from "@/components/SearchForm";
 import PropertyCard from "@/components/PropertyCard";
 import MonitoringDashboard from "@/components/MonitoringDashboard";
-import { Search, Bell, Zap, Shield, Loader2 } from "lucide-react";
+import { AuthModal } from "@/components/AuthModal";
+import { Search, Bell, Zap, Shield, Loader2, User, LogOut } from "lucide-react";
 import Cookies from "js-cookie";
 import { apiService, Property } from "@/services/api";
+import { useAuth } from "@/contexts/AuthContext";
 import kauaiHero from "@/assets/kauai-hero.jpg";
 import santoriniHero from "@/assets/santorini-hero.jpg";
 import baliHero from "@/assets/bali-hero.jpg";
@@ -60,6 +62,8 @@ const Index = () => {
   const [favoriteDestinations, setFavoriteDestinations] = useState<string[]>([]);
   const [recentProperties, setRecentProperties] = useState<Property[]>([]);
   const [loadingProperties, setLoadingProperties] = useState(true);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const { user, logout, isLoading } = useAuth();
 
   // Load favorite destinations from cookies
   useEffect(() => {
@@ -102,6 +106,44 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Navigation */}
+      <nav className="absolute top-0 left-0 right-0 z-20 p-6">
+        <div className="flex justify-between items-center max-w-7xl mx-auto">
+          <div className="text-white font-bold text-xl">
+            CancelScout
+          </div>
+          <div className="flex items-center gap-4">
+            {isLoading ? (
+              <div className="w-8 h-8 rounded-full bg-white/20 animate-pulse" />
+            ) : user ? (
+              <div className="flex items-center gap-2">
+                <span className="text-white text-sm">
+                  Welcome, {user.firstName}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-white/10 text-white border-white/20 hover:bg-white/20"
+                  onClick={logout}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                className="bg-white/10 text-white border-white/20 hover:bg-white/20"
+                onClick={() => setAuthModalOpen(true)}
+              >
+                <User className="h-4 w-4 mr-2" />
+                Login
+              </Button>
+            )}
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <div 
         className="relative h-screen bg-cover bg-center bg-no-repeat transition-all duration-1000"
@@ -288,6 +330,12 @@ const Index = () => {
           </Card>
         </div>
       </section>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+      />
     </div>
   );
 };
