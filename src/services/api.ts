@@ -97,6 +97,20 @@ class ApiService {
       method: 'DELETE',
     });
   }
+
+  async forgotPassword(email: string): Promise<void> {
+    return this.request('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    return this.request('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, password: newPassword }),
+    });
+  }
 }
 
 export const apiClient = new ApiService();
