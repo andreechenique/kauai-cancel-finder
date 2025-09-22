@@ -208,4 +208,4 @@ const NLPSearchForm = () => {
   );
 };
 
-export default NLPSearchForm;
+export { NLPSearchForm };

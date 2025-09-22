@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import NLPSearchForm from "./NLPSearchForm";
-import AdvancedSearchForm from "./AdvancedSearchForm";
+import { NLPSearchForm } from "./NLPSearchForm";
+import { AdvancedSearchForm } from "./AdvancedSearchForm";
 
 const SearchForm = () => {
   const [activeTab, setActiveTab] = useState("nlp");

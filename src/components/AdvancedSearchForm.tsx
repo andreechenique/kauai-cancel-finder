@@ -327,4 +327,4 @@ const AdvancedSearchForm = () => {
   );
 };
 
-export default AdvancedSearchForm;
+export { AdvancedSearchForm };
