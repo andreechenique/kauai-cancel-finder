@@ -159,6 +159,28 @@ const Index = () => {
         </div>
       </div>
 
+      {/* About Section */}
+      <section className="py-16 px-4 bg-gradient-to-b from-background to-muted/20">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="space-y-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+              Why CancelScout?
+            </h2>
+            <div className="text-lg md:text-xl text-muted-foreground leading-relaxed space-y-4">
+              <p>
+                Just remember, you were hoping to go on that vacation, but unfortunately, there's no availability anywhere because someone else booked ahead of you. But what if their plans changed and they canceled? How would you find out about that?
+              </p>
+              <p className="text-ocean font-medium">
+                This is where CancelScout comes in.
+              </p>
+              <p>
+                It will notify you instantly when vacation rentals that were previously unavailable become available. You can monitor Airbnb, VRBO, and hotels for cancellations and new availability in real time.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="py-20 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
