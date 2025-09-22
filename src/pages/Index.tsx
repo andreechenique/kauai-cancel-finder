@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SearchForm from "@/components/SearchForm";
 import PropertyCard from "@/components/PropertyCard";
 import MonitoringDashboard from "@/components/MonitoringDashboard";
+import { UserDashboard } from "@/components/UserDashboard";
 import { AuthModal } from "@/components/AuthModal";
 import { Search, Bell, Zap, Shield, Loader2, User, LogOut } from "lucide-react";
 import Cookies from "js-cookie";
@@ -305,7 +306,25 @@ const Index = () => {
             </TabsContent>
 
             <TabsContent value="monitoring">
-              <MonitoringDashboard />
+              {user ? (
+                <UserDashboard />
+              ) : (
+                <div className="text-center py-12">
+                  <Card className="p-8">
+                    <h3 className="text-xl font-semibold mb-4">Sign In Required</h3>
+                    <p className="text-muted-foreground mb-6">
+                      Please log in to view your monitoring dashboard and manage your active searches.
+                    </p>
+                    <Button 
+                      onClick={() => setAuthModalOpen(true)}
+                      className="bg-gradient-ocean hover:opacity-90"
+                    >
+                      <User className="h-4 w-4 mr-2" />
+                      Login / Register
+                    </Button>
+                  </Card>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
