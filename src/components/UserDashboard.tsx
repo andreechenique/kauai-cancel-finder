@@ -7,6 +7,7 @@ import { apiClient } from '@/services/api';
 import { Monitor } from '@/types/api';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { HealthCheck } from './HealthCheck';
 
 export const UserDashboard = () => {
   const [monitors, setMonitors] = useState<Monitor[]>([]);
@@ -56,6 +57,10 @@ export const UserDashboard = () => {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6">Your Active Monitors</h2>
+      
+      <div className="mb-6">
+        <HealthCheck />
+      </div>
       
       {monitors.length === 0 ? (
         <Card>
